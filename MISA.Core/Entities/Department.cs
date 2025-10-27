@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MISA.Core.Entities
 {
     /// <summary>
-    /// Bọ phận sử dụng tài sản
+    /// Thông tin bộ phận sử dụng tài sản
     /// </summary>
     public class Department
     {

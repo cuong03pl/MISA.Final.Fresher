@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MISA.Core.Entities
 {
     /// <summary>
-    /// Loại tài sản
+    /// Thông tin loại tài sản
     /// </summary>
     public class AssetType : AuditInfo
     {

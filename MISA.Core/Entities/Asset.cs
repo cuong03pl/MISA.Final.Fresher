@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MISA.Core.MISAAttributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace MISA.Core.Entities
 {
+    /// <summary>
+    /// Thông tin tài sản
+    /// </summary>
+    [TableAttribute("asset")]
     public class Asset : AuditInfo
     {
         /// <summary>
