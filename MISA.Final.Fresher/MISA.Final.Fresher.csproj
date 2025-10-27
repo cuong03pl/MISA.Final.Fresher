@@ -11,4 +11,13 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MISA.Core\MISA.Core.csproj" />
+    <ProjectReference Include="..\MISA.Infrastructure\MISA.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
