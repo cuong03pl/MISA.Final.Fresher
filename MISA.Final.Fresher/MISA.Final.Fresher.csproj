@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MISA.Core\MISA.Core.csproj" />
     <ProjectReference Include="..\MISA.Infrastructure\MISA.Infrastructure.csproj" />
   </ItemGroup>
