@@ -16,6 +16,7 @@ namespace MISA.Core.Interfaces.Service
         /// Lấy tất cả bản ghi cuả entity
         /// </summary>
         /// <returns>Danh sách tất cả bản ghi</returns>
+        /// CreatedBy: HKC (27/10/2025)
         IEnumerable<T> GetAll();
 
         /// <summary>
@@ -23,6 +24,7 @@ namespace MISA.Core.Interfaces.Service
         /// </summary>
         /// <param name="entityId">Id bản ghi cần lấy</param>
         /// <returns>Bản ghi</returns>
+        /// CreatedBy: HKC (27/10/2025)
         T GetById(Guid entityId);
 
 
@@ -31,6 +33,7 @@ namespace MISA.Core.Interfaces.Service
         /// </summary>
         /// <param name="entity">Dữ liệu cần thêm</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         int Insert(T entity);
 
 
@@ -40,6 +43,7 @@ namespace MISA.Core.Interfaces.Service
         /// <param name="entity">Dữ liệu thay đổi</param>
         /// <param name="entityId">Id của bản ghi cần thay đổi</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         int Update(T entity, Guid entityId);
 
 
@@ -48,6 +52,7 @@ namespace MISA.Core.Interfaces.Service
         /// </summary>
         /// <param name="entityId">Id của bản ghi cần xóa</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         int Delete(Guid entityId);
     }
 }

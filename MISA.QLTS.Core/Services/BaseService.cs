@@ -14,6 +14,7 @@ namespace MISA.Core.Services
     /// Base service cho tất cả các entity.
     /// </summary>
     /// <typeparam name="T">Loại entity</typeparam>
+    /// CreatedBy: HKC (27/10/2025)
 
     public class BaseService<T> : IBaseService<T>
     {
@@ -29,6 +30,7 @@ namespace MISA.Core.Services
         /// </summary>
         /// <param name="entityId">Id của bản ghi cần xóa</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public int Delete(Guid entityId)
         {
             return _baseRepo.Delete(entityId);
@@ -38,6 +40,7 @@ namespace MISA.Core.Services
         /// Lấy tất cả bản ghi của entity T
         /// </summary>
         /// <returns>Danh sách tất cả các bản ghi</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public IEnumerable<T> GetAll()
         {
             return _baseRepo.GetAll();
@@ -49,6 +52,7 @@ namespace MISA.Core.Services
         /// </summary>
         /// <param name="entityId">Id bản ghi cần lấy</param>
         /// <returns>Bản ghi</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public T GetById(Guid entityId)
         {
             return _baseRepo.GetById(entityId);
@@ -60,6 +64,7 @@ namespace MISA.Core.Services
         /// </summary>
         /// <param name="entity">Dữ liệu cần thêm</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public int Insert(T entity)
         {
             CustomValidate(entity);
@@ -74,6 +79,7 @@ namespace MISA.Core.Services
         /// <param name="entity">Dữ liệu thay đổi</param>
         /// <param name="entityId">Id của bản ghi cần thay đổi</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public int Update(T entity, Guid entityId)
         {
             return _baseRepo.Update(entity, entityId);
@@ -83,6 +89,7 @@ namespace MISA.Core.Services
         /// Hàm validate dùng chung
         /// </summary>
         /// <param name="entity">Dữ liệu cần validate</param>
+        /// CreatedBy: HKC (27/10/2025)
         public void ValidateCustom(T entity)
         {
             // Lấy tất cả các property của entity có attribute NotEmpty
@@ -112,6 +119,7 @@ namespace MISA.Core.Services
         /// Hàm validate theo custom riêng cho từng entity
         /// </summary>
         /// <param name="entity">Dữ liệu cần validate</param>
+        /// CreatedBy: HKC (28/10/2025)
         public virtual void CustomValidate(T entity)
         {
            

@@ -10,6 +10,7 @@ namespace MISA.Core.MISAAttributes
     /// Attribute dùng để gán tên bảng trong database cho class entity.
     /// Mapping giữa tên class trong code và tên bảng trong DB.
     /// </summary>
+    /// CreatedBy: HKC (27/10/2025)
     public class TableAttribute : Attribute
     {
         public string TableName { get; set; }

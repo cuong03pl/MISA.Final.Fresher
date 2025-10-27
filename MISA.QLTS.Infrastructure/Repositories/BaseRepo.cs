@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using MISA.Core.Interfaces.Repository;
 using MISA.Core.MISAAttributes;
+using MISA.QLTS.Core.MISAAttributes;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,7 @@ namespace MISA.Infrastructure.Repositories
         /// Lấy tất cả bản ghi của bảng trong database
         /// </summary>
         /// <returns>Danh sách tất cả bản ghi</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public IEnumerable<T> GetAll()
         {
             var tableName = GetTableName();
@@ -40,6 +43,7 @@ namespace MISA.Infrastructure.Repositories
         /// </summary>
         /// <param name="entityId">Id bản ghi cần lấy</param>
         /// <returns>Bản ghi</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public T GetById(Guid entityId)
         {
             var tableName = GetTableName();
@@ -53,21 +57,51 @@ namespace MISA.Infrastructure.Repositories
             }
         }
 
-        
+
         /// <summary>
         /// Xử lý thêm mới bản ghi
         /// </summary>
         /// <param name="entity">Dữ liệu cần thêm</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public int Insert(T entity)
         {
             var tableName = GetTableName();
-           
-            using (SqlConnection = new MySqlConnection(connectionString))
+            var props = entity.GetType().GetProperties();
+
+            // Tạo danh sách cột và giá trị, bỏ qua PK nếu cần
+            var columns = new List<string>();
+            var values = new List<string>();
+            DynamicParameters parameters = new DynamicParameters();
+
+            foreach (var prop in props)
             {
-                return 1;
+                var primaryKeyAttr = prop.GetCustomAttribute<PrimaryKey>();
+                bool isPK = primaryKeyAttr != null;
+
+                // Nếu là Guid PK tự sinh Guid
+                if (isPK)
+                {
+                    prop.SetValue(entity, Guid.NewGuid());
+                }
+
+                // Lấy tên cột từ attribute nếu có
+                var columnAttr = prop.GetCustomAttribute<ColumnNameAttribute>();
+                string columnName = columnAttr != null ? columnAttr.Name : prop.Name;
+
+                columns.Add(columnName);
+                values.Add("@" + columnName);
+                parameters.Add("@" + columnName, prop.GetValue(entity));
+            }
+
+            var sql = $"INSERT INTO {tableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})";
+
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                return conn.Execute(sql, parameters);
             }
         }
+
 
 
         /// <summary>
@@ -76,13 +110,43 @@ namespace MISA.Infrastructure.Repositories
         /// <param name="entity">Dữ liệu thay đổi</param>
         /// <param name="entityId">Id của bản ghi cần thay đổi</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public int Update(T entity, Guid entityId)
         {
             var tableName = GetTableName();
+            var props = entity.GetType().GetProperties();
+            var setClauses = new List<string>();
+            DynamicParameters parameters = new DynamicParameters();
 
-            using (SqlConnection = new MySqlConnection(connectionString))
+            string primaryKeyColumn = null;
+            object primaryKeyValue = null;
+
+            foreach (var prop in props)
             {
-                return 1;
+                // Lấy attribute PrimaryKey 
+                var primaryKeyAttr = prop.GetCustomAttribute<PrimaryKey>();
+                var columnAttr = prop.GetCustomAttribute<ColumnNameAttribute>();
+                string columnName = columnAttr != null ? columnAttr.Name : prop.Name;
+
+                var propValue = prop.GetValue(entity);
+
+               
+                if (primaryKeyAttr != null)
+                {
+                    primaryKeyColumn = columnName;
+                    primaryKeyValue = entityId;
+                    continue;  // Nếu là khóa chính thì không update mà chỉ dùng để where
+                }
+                setClauses.Add($"{columnName} = @{columnName}");
+                parameters.Add("@" + columnName, propValue);
+            }
+            parameters.Add("@" + primaryKeyColumn, primaryKeyValue);
+
+            var sql = $"UPDATE {tableName} SET {string.Join(", ", setClauses)} WHERE {primaryKeyColumn} = @{primaryKeyColumn}";
+
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                return conn.Execute(sql, parameters);
             }
         }
 
@@ -92,6 +156,7 @@ namespace MISA.Infrastructure.Repositories
         /// </summary>
         /// <param name="entityId">Id của bản ghi cần xóa</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (27/10/2025)
         public int Delete(Guid entityId)
         {
             var tableName = GetTableName();
@@ -120,7 +185,12 @@ namespace MISA.Infrastructure.Repositories
             {
                 tableName = attr.TableName;
             }
-            return tableName;
+            return tableName.ToLower();
+        }
+
+        public bool CheckCodeExist(string code)
+        {
+            throw new NotImplementedException();
         }
     }
 }
