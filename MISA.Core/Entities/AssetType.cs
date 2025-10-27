@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MISA.Core.MISAAttributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

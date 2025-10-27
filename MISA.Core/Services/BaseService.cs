@@ -1,5 +1,7 @@
-﻿using MISA.Core.Interfaces.Repository;
+﻿using MISA.Core.Exceptions;
+using MISA.Core.Interfaces.Repository;
 using MISA.Core.Interfaces.Service;
+using MISA.Core.MISAAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +17,9 @@ namespace MISA.Core.Services
 
     public class BaseService<T> : IBaseService<T>
     {
-       readonly IBaseRepo<T> _baseRepo;
-        public BaseService(IBaseRepo<T> baseRepo) {
+        readonly IBaseRepo<T> _baseRepo;
+        public BaseService(IBaseRepo<T> baseRepo)
+        {
             _baseRepo = baseRepo;
         }
 
@@ -59,6 +62,8 @@ namespace MISA.Core.Services
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
         public int Insert(T entity)
         {
+            CustomValidate(entity);
+            ValidateCustom(entity);
             return _baseRepo.Insert(entity);
         }
 
@@ -72,6 +77,44 @@ namespace MISA.Core.Services
         public int Update(T entity, Guid entityId)
         {
             return _baseRepo.Update(entity, entityId);
+        }
+
+        /// <summary>
+        /// Hàm validate dùng chung
+        /// </summary>
+        /// <param name="entity">Dữ liệu cần validate</param>
+        public void ValidateCustom(T entity)
+        {
+            // Lấy tất cả các property của entity có attribute NotEmpty
+            var props = entity.GetType().GetProperties().Where(p => Attribute.IsDefined(p, typeof(NotEmptyAttribute)));
+
+            // Lặp qua tất cả các props
+            foreach (var prop in props)
+            {
+                // Lấy giá trị của prop
+                var propValue = prop.GetValue(entity);
+                var nameDisplay = prop.Name;
+                // Lấy tất cả attribute gắn trên prop
+                var attributes = prop.GetCustomAttributes(typeof(NotEmptyAttribute), true);
+                if (attributes.Length > 0)
+                {
+                    nameDisplay = ((NotEmptyAttribute)attributes[0]).Name;
+                }
+                // Kiểm tra nếu giá trị là null hoặc chuỗi rỗng thì ném ra ex
+                if (propValue == null || (string.IsNullOrEmpty(propValue.ToString())))
+                {
+                    throw new ValidateException($"{nameDisplay} không được để trống");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Hàm validate theo custom riêng cho từng entity
+        /// </summary>
+        /// <param name="entity">Dữ liệu cần validate</param>
+        public virtual void CustomValidate(T entity)
+        {
+           
         }
     }
 }

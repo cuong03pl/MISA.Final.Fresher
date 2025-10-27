@@ -21,26 +21,31 @@ namespace MISA.Core.Entities
         /// <summary>
         /// Mã tài sản
         /// </summary>
+        [NotEmptyAttribute("Mã tài sản")]
         public string AssetCode { get; set; }
 
         /// <summary>
         /// Tên tài sản
         /// </summary>
+        [NotEmptyAttribute("Tên tài sản")]
         public string AssetName { get; set; }
 
         /// <summary>
         /// Ngày mua
         /// </summary>
+        [NotEmpty("Ngày mua")]
         public DateTime PurchaseDate { get; set; }
 
         /// <summary>
         /// Số lượng (số nguyên dương)
         /// </summary>
+        [NotEmpty("Số lượng")]
         public int Quantity { get; set; }
 
         /// <summary>
         /// Nguyên giá (VNĐ)
         /// </summary>
+        [NotEmpty("Nguyên giá")]
         public decimal Price { get; set; }
 
         /// <summary>
@@ -51,11 +56,13 @@ namespace MISA.Core.Entities
         /// <summary>
         /// Id bộ phận sử dụng
         /// </summary>
+        [NotEmpty("Bộ phận sử dụng")]
         public Guid DepartmentId { get; set; }
 
         /// <summary>
         /// Id loại tài sản
         /// </summary>
+        [NotEmpty("Loại tài sản")]
         public Guid AssetTypeId { get; set; }
     }
 }

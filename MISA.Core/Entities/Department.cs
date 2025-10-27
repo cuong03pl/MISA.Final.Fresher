@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MISA.Core.MISAAttributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,7 @@ namespace MISA.Core.Entities
         /// <summary>
         /// Tên bộ phận
         /// </summary>
+        [NotEmptyAttribute("Tên bộ phận")]
         public string DepartmentName { get; set; }
     }
 }
