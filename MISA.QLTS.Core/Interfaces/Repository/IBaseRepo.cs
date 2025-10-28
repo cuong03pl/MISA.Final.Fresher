@@ -60,10 +60,11 @@ namespace MISA.Core.Interfaces.Repository
         /// <summary>
         /// Xử lý check mã đã tồn tại chưa
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="entity">Dữ liệu cần kiểm tra</param>
+        /// <param name="id">Id dữ liệu hiện tại cần kiểm tra</param>
         /// <returns>1 - Trùng, 0 - Không trùng</returns>
         /// CreatedBy: HKC (27/10/2025)
-        bool CheckCodeExist(string code);
+        void CheckCodeExist(T entity, Guid? id);
 
     }
 }

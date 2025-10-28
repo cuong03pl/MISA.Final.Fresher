@@ -5,7 +5,7 @@ using MISA.Core.Interfaces.Service;
 
 namespace MISA.Final.Fresher.Controllers
 {
-    [Route("api/asset")]
+    [Route("api/assets")]
     [ApiController]
     public class AssetsController : BasesController<Asset>
     {

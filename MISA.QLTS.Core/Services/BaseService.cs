@@ -68,7 +68,7 @@ namespace MISA.Core.Services
         public int Insert(T entity)
         {
             CustomValidate(entity);
-            ValidateCustom(entity);
+            ValidateData(entity);
             return _baseRepo.Insert(entity);
         }
 
@@ -90,7 +90,7 @@ namespace MISA.Core.Services
         /// </summary>
         /// <param name="entity">Dữ liệu cần validate</param>
         /// CreatedBy: HKC (27/10/2025)
-        public void ValidateCustom(T entity)
+        public void ValidateData(T entity)
         {
             // Lấy tất cả các property của entity có attribute NotEmpty
             var props = entity.GetType().GetProperties().Where(p => Attribute.IsDefined(p, typeof(NotEmptyAttribute)));

@@ -24,6 +24,7 @@ namespace MISA.Core.Entities
         /// Mã bộ phận
         /// </summary>
         [ColumnNameAttribute("department_code")]
+        [UniqueAttribute("Mã bộ phận")]
         public string DepartmentCode { get; set; }
 
         /// <summary>

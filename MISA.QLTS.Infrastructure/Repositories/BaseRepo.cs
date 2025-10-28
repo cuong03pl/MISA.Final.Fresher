@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using MISA.Core.Exceptions;
 using MISA.Core.Interfaces.Repository;
 using MISA.Core.MISAAttributes;
 using MISA.QLTS.Core.MISAAttributes;
@@ -66,6 +67,8 @@ namespace MISA.Infrastructure.Repositories
         /// CreatedBy: HKC (27/10/2025)
         public int Insert(T entity)
         {
+            
+            CheckCodeExist(entity);
             var tableName = GetTableName();
             var props = entity.GetType().GetProperties();
 
@@ -113,6 +116,7 @@ namespace MISA.Infrastructure.Repositories
         /// CreatedBy: HKC (27/10/2025)
         public int Update(T entity, Guid entityId)
         {
+            CheckCodeExist(entity, entityId);
             var tableName = GetTableName();
             var props = entity.GetType().GetProperties();
             var setClauses = new List<string>();
@@ -188,9 +192,65 @@ namespace MISA.Infrastructure.Repositories
             return tableName.ToLower();
         }
 
-        public bool CheckCodeExist(string code)
+        /// <summary>
+        /// Kiểm tra mã đã tồn tại chưa
+        /// </summary>
+        /// <param name="entity">Dữ liệu mới cần thêm hoặc sửa</param>
+        /// <exception cref="ValidateException"></exception>
+        /// CreatedBy: 
+        /// HKC (28/10/2025)
+        public void CheckCodeExist(T entity, Guid? id = null)
         {
-            throw new NotImplementedException();
+            var tableName = GetTableName();
+
+            // Lấy các props có attribute Unique
+            var props = entity.GetType().GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(UniqueAttribute))).ToList();
+
+            if (!props.Any())
+                return;
+
+            var setClauses = new List<string>();
+            var fieldNames = new List<string>();
+            DynamicParameters parameters = new DynamicParameters();
+            // Lặp qua các props để lấy giá trị và ColumnNameAttribute
+            foreach (var prop in props)
+            {
+                var columnAttr = prop.GetCustomAttribute<ColumnNameAttribute>();
+                var uniqueAttr = prop.GetCustomAttribute<UniqueAttribute>();
+                string columnName = columnAttr != null ? columnAttr.Name : prop.Name;
+                var propValue = prop.GetValue(entity);
+                
+                setClauses.Add($"{columnName} = @{columnName}");
+                parameters.Add("@" + columnName, propValue);
+                fieldNames.Add(uniqueAttr.Name);
+            }
+
+            var sql = $"SELECT COUNT(1) FROM {tableName} WHERE {string.Join(" OR ", setClauses)}";
+
+            // Nếu là cập nhật thì loại trừ bản ghi hiện tại bằng cách thêm điều kiện AND PrimaryKey != id
+            var pkProp = entity.GetType().GetProperties()
+            .FirstOrDefault(p => Attribute.IsDefined(p, typeof(PrimaryKey)));
+            if (id != null && pkProp != null)
+            {
+                var pkColumn = pkProp.GetCustomAttribute<ColumnNameAttribute>()?.Name ?? pkProp.Name;
+                sql += $" AND {pkColumn} <> @id";
+                parameters.Add("@id", id);
+            }
+
+            using (SqlConnection = new MySqlConnection(connectionString))
+            {
+                var data = SqlConnection.ExecuteScalar<int>(sql, parameters);
+                if(data > 0)
+                {
+                    var fieldName = fieldNames.Count == 1
+                ? fieldNames[0]
+                : string.Join(", ", fieldNames.Select(p => p));
+                    throw new ValidateException($"{fieldName} đã tồn tại trong hệ thống");
+                }
+
+            }
+
         }
     }
 }
