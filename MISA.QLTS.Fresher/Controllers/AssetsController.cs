@@ -30,6 +30,11 @@ namespace MISA.Final.Fresher.Controllers
             return Ok(assets);
         }
 
+        /// <summary>
+        /// API lấy tài sản bởi id theo DTO
+        /// </summary>
+        /// <returns>Danh sách tài sản theo DTO</returns>
+        /// CreatedBy: HKC (29/10/2025)
         [HttpGet]
         [Route("{id}")]
         public override IActionResult GetById(Guid id)
@@ -38,6 +43,13 @@ namespace MISA.Final.Fresher.Controllers
             return Ok(entity);
         }
 
+        /// <summary>
+        /// API lấy mã tài sản mới theo tiền tố TS
+        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
+        /// </summary>
+        /// <returns>Mã tài sản mới</returns>
+        /// CreatedBy: HKC (31/10/2025)
+        
         [HttpGet]
         [Route("new-asset-code")]
         public IActionResult GetNewAssetCode()

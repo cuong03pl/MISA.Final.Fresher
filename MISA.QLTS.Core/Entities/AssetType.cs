@@ -1,4 +1,5 @@
 ﻿using MISA.Core.MISAAttributes;
+using MISA.QLTS.Core.MISAAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,15 @@ namespace MISA.Core.Entities
         /// <summary>
         /// Id loại tài sản
         /// </summary>
+        [ColumnNameAttribute("asset_type_id")]
+        [PrimaryKey]
         public Guid AssetTypeId { get; set; }
 
         /// <summary>
         /// Mã loại tài sản
         /// </summary>
+        [ColumnNameAttribute("asset_type_code")]
+        [UniqueAttribute("Mã loại tài sản")]
         public string AssetTypeCode { get; set; }
 
         /// <summary>

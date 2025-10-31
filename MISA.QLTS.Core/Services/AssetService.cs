@@ -30,6 +30,11 @@ namespace MISA.Core.Services
             return _assetRepo.GetAllDto(q, departmentCode, assetTypeCode, pageNumber, pageSize);
         }
 
+        /// <summary>
+        /// Xử lý custom validate cho tài sản
+        /// </summary>
+        /// <param name="asset">Thông tin tài sản</param>
+        /// <exception cref="ValidateException"></exception>
         public override void CustomValidate(Asset asset)
         {
             var assetType = _assetRepo.GetAssetTypeByAsset(asset.AssetTypeId);
@@ -41,11 +46,22 @@ namespace MISA.Core.Services
             }
         }
 
+        /// <summary>
+        /// Lấy 1 tài sản theo DTO
+        /// </summary>
+        /// <returns>Tài sản theo DTO</returns>
+        /// CreatedBy: HKC (30/10/2025)
         public AssetDto GetAssetDto(Guid assetId)
         {
             return _assetRepo.GetAssetDto(assetId);
         }
 
+        /// <summary>
+        /// Hàm sinh mã tài sản mới theo tiền tố TS
+        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
+        /// </summary>
+        /// <returns>Mã tài sản mới</returns>
+        /// CreatedBy: HKC (31/10/2025)
         public string GenerateNewAssetCode()
         {
             return _assetRepo.GenerateNewAssetCode();

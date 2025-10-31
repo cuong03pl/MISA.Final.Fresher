@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace MISA.QLTS.Core.DTOs.Asset
 {
+    /// <summary>
+    /// Dữ liệu phân trang tài sản
+    /// </summary>
     public class AssetPagedResult : PagedResult<AssetDto>
     {
         /// <summary>

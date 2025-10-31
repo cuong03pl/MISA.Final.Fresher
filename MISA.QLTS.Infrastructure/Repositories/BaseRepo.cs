@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace MISA.Infrastructure.Repositories
 {
@@ -48,11 +49,12 @@ namespace MISA.Infrastructure.Repositories
         public T GetById(Guid entityId)
         {
             var tableName = GetTableName();
-            string sql = @$"SELECT * FROM {tableName} WHERE {tableName}_id = @{tableName}_id";
+            var columnName = GetPrimaryKeyColumn();
+            string sql = @$"SELECT * FROM {tableName} WHERE {columnName} = @Id";
             using (SqlConnection = new MySqlConnection(connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add($"@{tableName}_id", entityId);
+                parameters.Add($"@Id", entityId);
                 var data = SqlConnection.Query<T>(sql, parameters).FirstOrDefault();
                 return data;
             }
@@ -164,11 +166,12 @@ namespace MISA.Infrastructure.Repositories
         public int Delete(Guid entityId)
         {
             var tableName = GetTableName();
-            string sql = @$"DELETE FROM {tableName} WHERE {tableName}_id = @{tableName}_id";
+            var columnName = GetPrimaryKeyColumn();
+            string sql = @$"DELETE FROM {tableName} WHERE {columnName} = @Id";
             using (SqlConnection = new MySqlConnection(connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add($"@{tableName}_id", entityId);
+                parameters.Add($"@Id", entityId);
                 var data = SqlConnection.Execute(sql, parameters);
                 return data;
             }
@@ -253,17 +256,42 @@ namespace MISA.Infrastructure.Repositories
 
         }
 
+        /// <summary>
+        /// Xử lý xóa nhiều bản ghi
+        /// </summary>
+        /// <param name="entityIds">Danh sách id bản ghi cần xóa</param>
+        /// <returns></returns>
         public int DeleteMutiple(List<Guid> entityIds)
         {
-            var tableName = GetTableName();
-            string sql = @$"DELETE FROM {tableName} WHERE {tableName}_id IN @{tableName}_id";
+           var tableName = GetTableName();
+              var columnName = GetPrimaryKeyColumn();
+
+            DynamicParameters parameters = new DynamicParameters();
+            string sql = @$"DELETE FROM {tableName} WHERE {columnName} IN @Ids";
             using (SqlConnection = new MySqlConnection(connectionString))
             {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add($"@{tableName}_id", entityIds);
+                parameters.Add($"@Ids", entityIds);
                 var data = SqlConnection.Execute(sql, parameters);
                 return data;
             }
         }
+
+
+        /// <summary>
+        /// Lấy tên cột khóa chính của entity dựa theo attribute
+        /// </summary>
+        /// <returns>Tên cột trong database</returns>
+        /// <exception cref="Exception">Nếu không tìm thấy khóa chính</exception>
+        public static string GetPrimaryKeyColumn()
+        {
+            var tableName = GetTableName();
+            var type = typeof(T);
+            var PKProp = type.GetProperties().FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(PrimaryKey)));
+
+            var columnAttr = PKProp.GetCustomAttribute<ColumnNameAttribute>();
+            var columnName = columnAttr?.Name ?? PKProp.Name.ToLower();
+            return columnName;
+        }
+
     }
 }
