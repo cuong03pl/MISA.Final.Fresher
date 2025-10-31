@@ -14,21 +14,21 @@ namespace MISA.Final.Fresher.Controllers
             _baseService = baseService;
         }
         [HttpGet]
-        public IActionResult Get()
+        public virtual IActionResult Get()
         {
             var entities = _baseService.GetAll();
             return Ok(entities);
         }
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetById(Guid id)
+        public virtual IActionResult GetById(Guid id)
         {
             var entity = _baseService.GetById(id);
             return Ok(entity);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] T entity)
+        public virtual IActionResult Post([FromBody] T entity)
         {
             var res = _baseService.Insert(entity);
             return StatusCode(201, res);
@@ -36,7 +36,7 @@ namespace MISA.Final.Fresher.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public IActionResult Put([FromBody] T entity, Guid id)
+        public virtual IActionResult Put([FromBody] T entity, Guid id)
         {
             var res = _baseService.Update(entity, id);
             return Ok(res);
@@ -44,10 +44,18 @@ namespace MISA.Final.Fresher.Controllers
         
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult Delete(Guid id)
+        public virtual IActionResult Delete(Guid id)
         {
             var res = _baseService.Delete(id);
             return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("delete-multiple")]
+        public virtual IActionResult DeleteMultiple([FromBody] List<Guid> ids)
+        {
+             _baseService.DeleteMutiple(ids);
+            return Ok("Xóa thành công");
         }
     }
 }

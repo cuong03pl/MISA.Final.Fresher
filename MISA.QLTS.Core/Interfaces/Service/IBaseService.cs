@@ -54,5 +54,13 @@ namespace MISA.Core.Interfaces.Service
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
         /// CreatedBy: HKC (27/10/2025)
         int Delete(Guid entityId);
+
+        /// <summary>
+        /// Xử lý xóa nhiều bản ghi
+        /// </summary>
+        /// <param name="entityId">Id của các bản ghi cần xóa</param>
+        /// <returns>Số bản ghi bị ảnh hưởng trong database (> 0 - Thành công, 0 - Thất bại)</returns>
+        /// CreatedBy: HKC (30/10/2025)
+        int DeleteMutiple(List<Guid> entityId);
     }
 }

@@ -3,24 +3,38 @@ using MISA.Core.Interfaces.Repository;
 using MISA.Core.Interfaces.Service;
 using MISA.Core.Services;
 using MISA.Infrastructure.Repositories;
+using MISA.QLTS.Core.Interfaces.Repository;
+using MISA.QLTS.Core.Interfaces.Service;
+using MISA.QLTS.Core.Services;
+using MISA.QLTS.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowOrigin", builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDepartmentRepo, DepartmentRepo>();
 builder.Services.AddScoped<IAssetRepo, AssetRepo>();
+builder.Services.AddScoped<IAssetTypeRepo, AssetTypeRepo>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IAssetTypeService, AssetTypeService>();
 builder.Services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
 builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 var app = builder.Build();
 app.UseMiddleware<ValidateExceptionMiddleware>();
 // Configure the HTTP request pipeline.
+app.UseCors("AllowOrigin");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -10,6 +10,7 @@ namespace MISA.Core.Entities
     /// <summary>
     /// Thông tin loại tài sản
     /// </summary>
+    [TableAttribute("asset_type")]
     public class AssetType : AuditInfo
     {
         /// <summary>

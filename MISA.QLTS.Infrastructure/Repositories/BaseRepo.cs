@@ -26,7 +26,7 @@ namespace MISA.Infrastructure.Repositories
         /// </summary>
         /// <returns>Danh sách tất cả bản ghi</returns>
         /// CreatedBy: HKC (27/10/2025)
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
             var tableName = GetTableName();
             string sql = @$"SELECT * FROM {tableName}";
@@ -164,7 +164,7 @@ namespace MISA.Infrastructure.Repositories
         public int Delete(Guid entityId)
         {
             var tableName = GetTableName();
-            string sql = @$"DELETE * FROM {tableName} WHERE {tableName}_id = @{tableName}_id";
+            string sql = @$"DELETE FROM {tableName} WHERE {tableName}_id = @{tableName}_id";
             using (SqlConnection = new MySqlConnection(connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
@@ -251,6 +251,19 @@ namespace MISA.Infrastructure.Repositories
 
             }
 
+        }
+
+        public int DeleteMutiple(List<Guid> entityIds)
+        {
+            var tableName = GetTableName();
+            string sql = @$"DELETE FROM {tableName} WHERE {tableName}_id IN @{tableName}_id";
+            using (SqlConnection = new MySqlConnection(connectionString))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add($"@{tableName}_id", entityIds);
+                var data = SqlConnection.Execute(sql, parameters);
+                return data;
+            }
         }
     }
 }

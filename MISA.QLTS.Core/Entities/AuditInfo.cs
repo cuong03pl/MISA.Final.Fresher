@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MISA.QLTS.Core.MISAAttributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,21 +15,28 @@ namespace MISA.Core.Entities
         /// <summary>
         /// Ngày tạo
         /// </summary>
+        [ColumnNameAttribute("created_date")]
         public DateTime? CreatedDate { get; set; }
 
         /// <summary>
         /// Người tạo
         /// </summary>
-        public string CreatedBy { get; set; }
+        /// 
+        [ColumnNameAttribute("created_by")]
+        public string? CreatedBy { get; set; }
 
         /// <summary>
         /// Ngày sửa
         /// </summary>
+        /// 
+        [ColumnNameAttribute("modified_date")]
         public DateTime? ModifiedDate { get; set; }
 
         /// <summary>
         /// Người sửa
         /// </summary>
-        public string ModifiedBy { get; set; }
+        /// 
+        [ColumnNameAttribute("modified_by")]
+        public string? ModifiedBy { get; set; }
     }
 }

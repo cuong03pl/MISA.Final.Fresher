@@ -18,6 +18,7 @@ namespace MISA.Core.Entities
         /// Id tài sản
         /// </summary>
         [ColumnNameAttribute("asset_id")]
+        [PrimaryKey]
         public Guid AssetId { get; set; }
 
         /// <summary>
@@ -41,6 +42,20 @@ namespace MISA.Core.Entities
         [NotEmpty("Ngày mua")]
         [ColumnNameAttribute("purchase_date")]
         public DateTime PurchaseDate { get; set; }
+
+        /// <summary>
+        /// Ngày bắt đầu sử dụng
+        /// </summary>
+        [NotEmpty("Ngày bắt đầu")]
+        [ColumnNameAttribute("start_date")]
+        public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// Năm sử dụng
+        /// </summary>
+        [NotEmpty("Năm sử dụng")]
+        [ColumnNameAttribute("use_year")]
+        public int UseYear { get; set; }
 
         /// <summary>
         /// Số lượng (số nguyên dương)

@@ -82,6 +82,8 @@ namespace MISA.Core.Services
         /// CreatedBy: HKC (27/10/2025)
         public int Update(T entity, Guid entityId)
         {
+            CustomValidate(entity);
+            ValidateData(entity);
             return _baseRepo.Update(entity, entityId);
         }
 
@@ -123,6 +125,11 @@ namespace MISA.Core.Services
         public virtual void CustomValidate(T entity)
         {
            
+        }
+
+        public int DeleteMutiple(List<Guid> entityId)
+        {
+          return  _baseRepo.DeleteMutiple(entityId);
         }
     }
 }

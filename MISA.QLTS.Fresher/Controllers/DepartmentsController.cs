@@ -5,7 +5,7 @@ using MISA.Core.Interfaces.Service;
 
 namespace MISA.Final.Fresher.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/departments")]
     [ApiController]
     public class DepartmentsController : BasesController<Department>
     {
