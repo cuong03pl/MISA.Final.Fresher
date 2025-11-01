@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 namespace MISA.QLTS.Core.MISAAttributes
 {
     /// <summary>
-    /// Attribute đánh dấu thuộc tính là duy nhất
+    /// Dùng để đánh dấu tiền tố của mã tài sản
     /// </summary>
-    /// CreatedBy: HKC (30/10/2025)
-    public class UniqueAttribute : Attribute
+    /// CreatedBy: HKC (01/11/2025)
+    public class PrefixAttribute : Attribute
     {
         public string Name { get; set; }
-        public UniqueAttribute(string name) {
+        public PrefixAttribute(string name)
+        {
             Name = name;
         }
     }

@@ -23,15 +23,7 @@ namespace MISA.Core.Interfaces.Service
         /// </summary>
         /// <returns>Tài sản theo DTO</returns>
         /// CreatedBy: HKC (30/10/2025)
-        AssetDto GetAssetDto(Guid assetId);
+        AssetDto GetAssetDto(Guid assetId, string mode);
 
-
-        /// <summary>
-        /// Hàm sinh mã tài sản mới theo tiền tố TS
-        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
-        /// </summary>
-        /// <returns>Mã tài sản mới</returns>
-        /// CreatedBy: HKC (31/10/2025)
-        string GenerateNewAssetCode();
     }
 }

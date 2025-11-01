@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 
@@ -50,6 +51,7 @@ namespace MISA.Infrastructure.Repositories
         {
             var tableName = GetTableName();
             var columnName = GetPrimaryKeyColumn();
+           
             string sql = @$"SELECT * FROM {tableName} WHERE {columnName} = @Id";
             using (SqlConnection = new MySqlConnection(connectionString))
             {
@@ -200,8 +202,7 @@ namespace MISA.Infrastructure.Repositories
         /// </summary>
         /// <param name="entity">Dữ liệu mới cần thêm hoặc sửa</param>
         /// <exception cref="ValidateException"></exception>
-        /// CreatedBy: 
-        /// HKC (28/10/2025)
+        /// CreatedBy: HKC (28/10/2025)
         public void CheckCodeExist(T entity, Guid? id = null)
         {
             var tableName = GetTableName();
@@ -293,5 +294,72 @@ namespace MISA.Infrastructure.Repositories
             return columnName;
         }
 
+        /// <summary>
+        /// Xuử lý lấy thông tin prefix từ unique attribute
+        /// </summary>
+        /// <returns>Tên cột và tiền tố</returns>
+        /// CreatedBy: HKC (01/11/2025)
+        public static object GetPrefix()
+        {
+            var tableName = GetTableName();
+            var type = typeof(T);
+            var UProp = type.GetProperties().FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(UniqueAttribute)));
+
+            var columnAttr = UProp.GetCustomAttribute<ColumnNameAttribute>();
+            var columnName = columnAttr?.Name ?? UProp.Name.ToLower();
+
+            var prefixAttr = UProp.GetCustomAttribute<PrefixAttribute>();
+            var prefix = prefixAttr?.Name ?? string.Empty;
+            return new 
+            {
+                columnName,
+                prefix
+            };
+        }
+
+        /// <summary>
+        /// Hàm sinh mã mới theo tiền tố
+        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
+        /// </summary>
+        /// <returns>Mã tài sản mới</returns>
+        /// CreatedBy: HKC (01/11/2025)
+        public string GenerateNewCode()
+        {
+            var tableName = GetTableName();
+            dynamic prefixInfo = GetPrefix();
+            var sql = @$"SELECT {prefixInfo.columnName} FROM {tableName} WHERE {prefixInfo.columnName} LIKE '{prefixInfo.prefix}%' ORDER BY {prefixInfo.columnName} DESC LIMIT 1;
+            ";
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                // Lấy trực tiếp chuỗi code
+                var code = connection.QueryFirstOrDefault<string>(sql);
+
+                if (string.IsNullOrEmpty(code))
+                {
+                    // Nếu chưa có dữ liệu, bắt đầu từ TS001
+                    return $"{prefixInfo.prefix}00001";
+                }
+
+                // Tách phần chữ và phần số
+                var match = Regex.Match(code, @"^([A-Za-z]+)(\d+)$");
+                if (match.Success)
+                {
+                    string prefix = match.Groups[1].Value; // TS
+                    string numberPart = match.Groups[2].Value;  // VD: 001
+
+                    int number = int.Parse(numberPart) + 1;
+
+                    // numberPart.Length: số chứ số tối thiểu
+                    // nếu number.length < numberPart.Length thì sẽ thêm số 0 vào trước
+                    // ngược lại thì không cần thêm số 0 và giữ nguyên 
+
+                    string newCode = $"{prefix}{number.ToString(new string('0', numberPart.Length))}";
+
+                    return newCode;
+                }
+                return code;
+            }
+        }
     }
 }

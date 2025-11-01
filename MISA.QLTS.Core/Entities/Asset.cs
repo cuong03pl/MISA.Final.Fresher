@@ -27,6 +27,7 @@ namespace MISA.Core.Entities
         [NotEmptyAttribute("Mã tài sản")]
         [ColumnNameAttribute("asset_code")]
         [UniqueAttribute("Mã tài sản")]
+        [PrefixAttribute("TS")]
         public string AssetCode { get; set; }
 
         /// <summary>

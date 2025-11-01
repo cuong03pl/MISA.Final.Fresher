@@ -37,13 +37,13 @@ namespace MISA.Core.Services
         /// <exception cref="ValidateException"></exception>
         public override void CustomValidate(Asset asset)
         {
-            var assetType = _assetRepo.GetAssetTypeByAsset(asset.AssetTypeId);
-            var a = asset.Price * assetType.DepreciationRate / 100;
-            var b = asset.AnnualDepreciation;
-            if (asset.Price * assetType.DepreciationRate / 100 != asset.AnnualDepreciation)
-            {
-                throw new ValidateException("Giá trị hao mòn năm không hợp lệ.");
-            }
+            //var assetType = _assetRepo.GetAssetTypeByAsset(asset.AssetTypeId);
+            //var a = asset.Price * assetType.DepreciationRate / 100;
+            //var b = asset.AnnualDepreciation;
+            //if (asset.Price * assetType.DepreciationRate / 100 != asset.AnnualDepreciation)
+            //{
+            //    throw new ValidateException("Giá trị hao mòn năm không hợp lệ.");
+            //}
         }
 
         /// <summary>
@@ -51,20 +51,9 @@ namespace MISA.Core.Services
         /// </summary>
         /// <returns>Tài sản theo DTO</returns>
         /// CreatedBy: HKC (30/10/2025)
-        public AssetDto GetAssetDto(Guid assetId)
+        public AssetDto GetAssetDto(Guid assetId, string mode)
         {
-            return _assetRepo.GetAssetDto(assetId);
-        }
-
-        /// <summary>
-        /// Hàm sinh mã tài sản mới theo tiền tố TS
-        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
-        /// </summary>
-        /// <returns>Mã tài sản mới</returns>
-        /// CreatedBy: HKC (31/10/2025)
-        public string GenerateNewAssetCode()
-        {
-            return _assetRepo.GenerateNewAssetCode();
+            return _assetRepo.GetAssetDto(assetId, mode);
         }
     }
 }

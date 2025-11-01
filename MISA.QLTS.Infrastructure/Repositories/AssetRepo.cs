@@ -21,53 +21,7 @@ namespace MISA.Infrastructure.Repositories
         public AssetRepo(IConfiguration configuration) : base(configuration)
         {
         }
-        /// <summary>
-        /// Hàm sinh mã tài sản mới theo tiền tố TS
-        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
-        /// </summary>
-        /// <returns>Mã tài sản mới</returns>
-        /// CreatedBy: HKC (31/10/2025)
-        public string GenerateNewAssetCode()
-        {
-            var sql = @"
-                SELECT asset_code
-                FROM asset
-                WHERE asset_code LIKE 'TS%'
-                ORDER BY asset_code DESC
-                LIMIT 1;
-            ";
-
-            using (var connection = new MySqlConnection(connectionString))
-            {
-                // Lấy trực tiếp chuỗi asset_code
-                var code = connection.QueryFirstOrDefault<string>(sql);
-
-                if (string.IsNullOrEmpty(code))
-                {
-                    // Nếu chưa có dữ liệu, bắt đầu từ TS001
-                    return "TS00001";
-                }
-
-                // Tách phần chữ và phần số
-                var match = Regex.Match(code, @"^([A-Za-z]+)(\d+)$");
-                if (match.Success)
-                {
-                    string prefix = match.Groups[1].Value; // TS
-                    string numberPart = match.Groups[2].Value;  // VD: 001
-
-                    int number = int.Parse(numberPart) + 1;
-
-                    // numberPart.Length: số chứ số tối thiểu
-                    // nếu number.length < numberPart.Length thì sẽ thêm số 0 vào trước
-                    // ngược lại thì không cần thêm số 0 và giữ nguyên 
-
-                    string newCode = $"{prefix}{number.ToString(new string('0', numberPart.Length))}";
-
-                   return newCode;
-                }
-                return code;
-            }
-        }
+       
 
         /// <summary>
         /// Hàm lấy tất cả tài sản theo DTO và phân trang
@@ -119,8 +73,9 @@ namespace MISA.Infrastructure.Repositories
         /// <param name="assetId">Id tài sản</param>
         /// <returns>Tài sản theo DTO</returns>
         /// CreatedBy: HKC (30/10/2025)
-        public AssetDto GetAssetDto(Guid assetId)
+        public AssetDto GetAssetDto(Guid assetId, string mode)
         {
+            var newCode = GenerateNewCode();
             using (var connection = new MySqlConnection(connectionString))
             {
                 var data = connection.Query<AssetDto>(
@@ -128,7 +83,10 @@ namespace MISA.Infrastructure.Repositories
                     new { p_asset_id = assetId },
                     commandType: CommandType.StoredProcedure
                 ).FirstOrDefault();
-
+                if(mode == "duplicate")
+                {
+                    data.AssetCode = newCode;
+                }
                 return data;
             }
         }

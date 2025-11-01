@@ -67,8 +67,8 @@ namespace MISA.Core.Services
         /// CreatedBy: HKC (27/10/2025)
         public int Insert(T entity)
         {
-            CustomValidate(entity);
-            ValidateData(entity);
+            //CustomValidate(entity);
+            //ValidateData(entity);
             return _baseRepo.Insert(entity);
         }
 
@@ -127,9 +127,26 @@ namespace MISA.Core.Services
            
         }
 
-        public int DeleteMutiple(List<Guid> entityId)
+        /// <summary>
+        /// Xử lý xóa nhiều bản ghi
+        /// </summary>
+        /// <param name="entityIds">Danh sách id bản ghi cần xóa</param>
+        /// <returns></returns>
+        public int DeleteMutiple(List<Guid> entityIds)
         {
-          return  _baseRepo.DeleteMutiple(entityId);
+          return  _baseRepo.DeleteMutiple(entityIds);
+        }
+
+
+        /// <summary>
+        /// Hàm sinh mã mới theo tiền tố
+        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
+        /// </summary>
+        /// <returns>Mã tài sản mới</returns>
+        /// CreatedBy: HKC (01/11/2025)
+        public string GenerateNewCode()
+        {
+            return _baseRepo.GenerateNewCode();
         }
     }
 }

@@ -77,5 +77,13 @@ namespace MISA.Core.Interfaces.Repository
         /// CreatedBy: HKC (27/10/2025)
         void CheckCodeExist(T entity, Guid? id);
 
+        /// <summary>
+        /// Hàm sinh mã mới theo tiền tố
+        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
+        /// </summary>
+        /// <returns>Mã tài sản mới</returns>
+        /// CreatedBy: HKC (01/11/2025)
+        string GenerateNewCode();
+
     }
 }

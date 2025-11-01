@@ -61,6 +61,14 @@ namespace MISA.Core.Interfaces.Service
         /// <param name="entityId">Id của các bản ghi cần xóa</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (> 0 - Thành công, 0 - Thất bại)</returns>
         /// CreatedBy: HKC (30/10/2025)
-        int DeleteMutiple(List<Guid> entityId);
+        int DeleteMutiple(List<Guid> entityIds);
+
+        /// <summary>
+        /// Hàm sinh mã mới theo tiền tố
+        /// Công thức: Lấy cái mới nhất ra sau đó + 1 
+        /// </summary>
+        /// <returns>Mã tài sản mới</returns>
+        /// CreatedBy: HKC (01/11/2025)
+        string GenerateNewCode();
     }
 }

@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MISA.Core.Exceptions;
 using MISA.Core.Interfaces.Repository;
 using MISA.Core.Interfaces.Service;
@@ -8,43 +13,83 @@ using MISA.QLTS.Core.Interfaces.Service;
 using MISA.QLTS.Core.Services;
 using MISA.QLTS.Infrastructure.Repositories;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-builder.Services.AddCors(options =>
+namespace MISA.QLTS.Fresher
 {
-    options.AddPolicy("AllowOrigin", builder =>
+    public class Program
     {
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    });
-});
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IDepartmentRepo, DepartmentRepo>();
-builder.Services.AddScoped<IAssetRepo, AssetRepo>();
-builder.Services.AddScoped<IAssetTypeRepo, AssetTypeRepo>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IAssetService, AssetService>();
-builder.Services.AddScoped<IAssetTypeService, AssetTypeService>();
-builder.Services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
-builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
-var app = builder.Build();
-app.UseMiddleware<ValidateExceptionMiddleware>();
-// Configure the HTTP request pipeline.
-app.UseCors("AllowOrigin");
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
+
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+            // CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
+
+            // Add controllers
+            services.AddControllers();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
+
+            // DI Services
+            services.AddScoped<IDepartmentRepo, DepartmentRepo>();
+            services.AddScoped<IAssetRepo, AssetRepo>();
+            services.AddScoped<IAssetTypeRepo, AssetTypeRepo>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IAssetService, AssetService>();
+            services.AddScoped<IAssetTypeService, AssetTypeService>();
+            services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
+            services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+        }
+
+        
+        // middleware 
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseMiddleware<ValidateExceptionMiddleware>();
+            app.UseCors("AllowOrigin");
+            if (env.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthorization();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
