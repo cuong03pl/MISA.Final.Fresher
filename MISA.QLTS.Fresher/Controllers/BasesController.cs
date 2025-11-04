@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MISA.Core.Interfaces.Service;
+using MISA.QLTS.Core.DTOs.Response;
 
 namespace MISA.Final.Fresher.Controllers
 {
@@ -23,8 +24,8 @@ namespace MISA.Final.Fresher.Controllers
         [HttpGet]
         public virtual IActionResult Get()
         {
-            var entities = _baseService.GetAll();
-            return Ok(entities);
+                var entities = _baseService.GetAll();
+                return Ok(ServiceResponse<IEnumerable<T>>.Ok(entities, "Lấy dữ liệu thành công"));
         }
 
         /// <summary>
@@ -37,8 +38,8 @@ namespace MISA.Final.Fresher.Controllers
         [Route("{id}")]
         public virtual IActionResult GetById(Guid id,[FromQuery] string? mode)
         {
-            var entity = _baseService.GetById(id);
-            return Ok(entity);
+                var entity = _baseService.GetById(id);
+                return Ok(ServiceResponse<T>.Ok(entity, "Lấy dữ liệu thành công"));
         }
 
         /// <summary>
@@ -50,8 +51,8 @@ namespace MISA.Final.Fresher.Controllers
         [HttpPost]
         public virtual IActionResult Post([FromBody] T entity)
         {
-            var res = _baseService.Insert(entity);
-            return StatusCode(201, res);
+                var res = _baseService.Insert(entity);
+                return StatusCode(201, ServiceResponse<int>.Ok(res, "Thêm mới thành công"));
         }
 
         /// <summary>
@@ -65,8 +66,9 @@ namespace MISA.Final.Fresher.Controllers
         [Route("{id}")]
         public virtual IActionResult Put([FromBody] T entity, Guid id)
         {
-            var res = _baseService.Update(entity, id);
-            return Ok(res);
+                var res = _baseService.Update(entity, id);
+                return Ok(ServiceResponse<int>.Ok(res, "Cập nhật thành công"));
+          
         }
 
         /// <summary>
@@ -79,8 +81,10 @@ namespace MISA.Final.Fresher.Controllers
         [Route("{id}")]
         public virtual IActionResult Delete(Guid id)
         {
-            var res = _baseService.Delete(id);
-            return Ok(res);
+                var res = _baseService.Delete(id);
+                return Ok(ServiceResponse<int>.Ok(res, "Xóa thành công"));
+            
+            
         }
 
         /// <summary>
@@ -92,8 +96,10 @@ namespace MISA.Final.Fresher.Controllers
         [Route("delete-multiple")]
         public virtual IActionResult DeleteMultiple([FromBody] List<Guid> ids)
         {
-             _baseService.DeleteMutiple(ids);
-            return Ok("Xóa thành công");
+                _baseService.DeleteMutiple(ids);
+                return Ok(ServiceResponse<int>.Ok(ids.Count, "Xóa thành công"));
+            
+           
         }
 
         /// <summary>
@@ -106,8 +112,8 @@ namespace MISA.Final.Fresher.Controllers
         [Route("new-code")]
         public virtual IActionResult GetNewCode()
         {
-            var newCode = _baseService.GenerateNewCode();
-            return Ok(newCode);
+                var newCode = _baseService.GenerateNewCode();
+                return Ok(ServiceResponse<string>.Ok(newCode, "Sinh mã mới thành công"));
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MISA.Core.Entities;
 using MISA.Core.Interfaces.Service;
 using MISA.Core.Services;
+using MISA.QLTS.Core.DTOs.Response;
 
 namespace MISA.Final.Fresher.Controllers
 {
@@ -26,8 +27,9 @@ namespace MISA.Final.Fresher.Controllers
         [Route("paging")]
         public IActionResult Get([FromQuery] string? q, [FromQuery] string? departmentCode, [FromQuery] string? assetTypeCode, [FromQuery] int? pageNumber = 1, [FromQuery] int? pageSize = 20)
         {
-            var assets = _assetService.GetAllDto(q, departmentCode, assetTypeCode, pageNumber, pageSize);
-            return Ok(assets);
+                var assets = _assetService.GetAllDto(q, departmentCode, assetTypeCode, pageNumber, pageSize);
+                return Ok(ServiceResponse<object>.Ok(assets, "Lấy dữ liệu thành công"));
+           
         }
 
         /// <summary>
@@ -39,8 +41,8 @@ namespace MISA.Final.Fresher.Controllers
         [Route("{id}")]
         public override IActionResult GetById(Guid id, string? mode)
         {
-            var entity = _assetService.GetAssetDto(id, mode);
-            return Ok(entity);
+                var entity = _assetService.GetAssetDto(id, mode);
+                return Ok(ServiceResponse<object>.Ok(entity, "Lấy dữ liệu thành công"));
         }
 
     }

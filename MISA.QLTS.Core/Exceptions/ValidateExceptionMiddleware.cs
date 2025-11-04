@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MISA.QLTS.Core.DTOs.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,26 +25,26 @@ namespace MISA.Core.Exceptions
             }
             catch (NotFoundException ex)
             {
-                context.Response.StatusCode = 404;
-                var errorResponse = new
-                {
-                    devMsg = ex.Message,
-                    message = ex.Message
-                };
+                context.Response.StatusCode = 200;
                 context.Response.ContentType = "application/json";
-                var json = JsonSerializer.Serialize(errorResponse);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var json = JsonSerializer.Serialize(ServiceResponse<object>.Error(ex.Message, ex.Message), options);
                 await context.Response.WriteAsync(json);
             }
             catch (ValidateException ex)
             {
-                context.Response.StatusCode = 400;
-                var errorResponse = new
-                {
-                    devMsg = ex.Message,
-                    Message = ex.Message
-                };
+                context.Response.StatusCode = 200;
                 context.Response.ContentType = "application/json";
-                var json = JsonSerializer.Serialize(errorResponse);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var json = JsonSerializer.Serialize(ServiceResponse<object>.Error(ex.Message, ex.Message), options);
                 await context.Response.WriteAsync(json);
             }
             catch (Exception ex)
