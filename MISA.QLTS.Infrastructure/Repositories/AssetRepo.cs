@@ -75,7 +75,6 @@ namespace MISA.Infrastructure.Repositories
         /// CreatedBy: HKC (30/10/2025)
         public AssetDto GetAssetDto(Guid assetId, string mode)
         {
-            var newCode = GenerateNewCode();
             using (var connection = new MySqlConnection(connectionString))
             {
                 var data = connection.Query<AssetDto>(
@@ -89,6 +88,7 @@ namespace MISA.Infrastructure.Repositories
                 }
                 if (mode == "duplicate")
                 {
+                    var newCode = GenerateNewCode();
                     data.AssetCode = newCode;
                 }
               
