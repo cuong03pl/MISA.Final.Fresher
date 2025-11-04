@@ -33,6 +33,12 @@ namespace MISA.Core.Entities
         /// </summary>
         public string AssetTypeName { get; set; }
 
+
+        /// <summary>
+        /// Tên loại viết tắt
+        /// </summary>
+        public string AssetTypeAbbreviation { get; set; }
+
         /// <summary>
         /// Số năm sử dụng
         /// </summary>

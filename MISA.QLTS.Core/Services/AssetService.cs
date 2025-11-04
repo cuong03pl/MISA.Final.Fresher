@@ -50,10 +50,16 @@ namespace MISA.Core.Services
         /// Lấy 1 tài sản theo DTO
         /// </summary>
         /// <returns>Tài sản theo DTO</returns>
+        /// <exception cref="NotFoundException">Nếu không tìm thấy tài sản</exception>
         /// CreatedBy: HKC (30/10/2025)
         public AssetDto GetAssetDto(Guid assetId, string mode)
         {
-            return _assetRepo.GetAssetDto(assetId, mode);
+            var assetDto = _assetRepo.GetAssetDto(assetId, mode);
+            if (assetDto == null)
+            {
+                throw new NotFoundException($"Không tìm thấy tài sản");
+            }
+            return assetDto;
         }
     }
 }

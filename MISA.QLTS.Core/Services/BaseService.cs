@@ -30,10 +30,13 @@ namespace MISA.Core.Services
         /// </summary>
         /// <param name="entityId">Id của bản ghi cần xóa</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// <exception cref="NotFoundException">Nếu không tìm thấy bản ghi cần xóa</exception>
         /// CreatedBy: HKC (27/10/2025)
         public int Delete(Guid entityId)
         {
+         _baseRepo.GetById(entityId);
             return _baseRepo.Delete(entityId);
+        
         }
 
         /// <summary>
@@ -52,10 +55,16 @@ namespace MISA.Core.Services
         /// </summary>
         /// <param name="entityId">Id bản ghi cần lấy</param>
         /// <returns>Bản ghi</returns>
+        /// <exception cref="NotFoundException">Nếu không tìm thấy bản ghi</exception>
         /// CreatedBy: HKC (27/10/2025)
         public T GetById(Guid entityId)
         {
-            return _baseRepo.GetById(entityId);
+            var entity = _baseRepo.GetById(entityId);
+            if (entity == null)
+            {
+                throw new NotFoundException("Không tìm thấy dữ liệu");
+            }
+            return entity;
         }
 
 
@@ -67,8 +76,8 @@ namespace MISA.Core.Services
         /// CreatedBy: HKC (27/10/2025)
         public int Insert(T entity)
         {
-            //CustomValidate(entity);
-            //ValidateData(entity);
+            CustomValidate(entity);
+            ValidateData(entity);
             return _baseRepo.Insert(entity);
         }
 
@@ -79,12 +88,23 @@ namespace MISA.Core.Services
         /// <param name="entity">Dữ liệu thay đổi</param>
         /// <param name="entityId">Id của bản ghi cần thay đổi</param>
         /// <returns>Số bản ghi bị ảnh hưởng trong database (1 - Thành công, 0 - Thất bại)</returns>
+        /// <exception cref="NotFoundException">Nếu không tìm thấy bản ghi cần cập nhật</exception>
         /// CreatedBy: HKC (27/10/2025)
         public int Update(T entity, Guid entityId)
         {
+            // Kiểm tra bản ghi tồn tại trước khi cập nhật
+            _baseRepo.GetById(entityId);
             CustomValidate(entity);
             ValidateData(entity);
-            return _baseRepo.Update(entity, entityId);
+            var result = _baseRepo.Update(entity, entityId);
+            if (result == 0)
+            {
+                throw new NotFoundException(" Không tìm thấy dữ liệu, có thể đã bị xóa");
+            }
+            else 
+            {
+                return result;
+            }
         }
 
         /// <summary>
@@ -131,10 +151,15 @@ namespace MISA.Core.Services
         /// Xử lý xóa nhiều bản ghi
         /// </summary>
         /// <param name="entityIds">Danh sách id bản ghi cần xóa</param>
-        /// <returns></returns>
+        /// <returns>Số bản ghi bị ảnh hưởng</returns>
+        /// <exception cref="NotFoundException">Nếu một trong các bản ghi không tồn tại</exception>
         public int DeleteMutiple(List<Guid> entityIds)
         {
-          return  _baseRepo.DeleteMutiple(entityIds);
+            foreach (var id in entityIds)
+            {
+                GetById(id);
+            }
+            return  _baseRepo.DeleteMutiple(entityIds);
         }
 
 
@@ -143,10 +168,18 @@ namespace MISA.Core.Services
         /// Công thức: Lấy cái mới nhất ra sau đó + 1 
         /// </summary>
         /// <returns>Mã tài sản mới</returns>
+        /// <exception cref="Exception">Nếu có lỗi trong quá trình sinh mã</exception>
         /// CreatedBy: HKC (01/11/2025)
         public string GenerateNewCode()
         {
-            return _baseRepo.GenerateNewCode();
+            try
+            {
+                return _baseRepo.GenerateNewCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi sinh mã mới: {ex.Message}");
+            }
         }
     }
 }

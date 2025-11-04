@@ -22,6 +22,18 @@ namespace MISA.Core.Exceptions
             {
                 await _next(context);
             }
+            catch (NotFoundException ex)
+            {
+                context.Response.StatusCode = 404;
+                var errorResponse = new
+                {
+                    devMsg = ex.Message,
+                    message = ex.Message
+                };
+                context.Response.ContentType = "application/json";
+                var json = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(json);
+            }
             catch (ValidateException ex)
             {
                 context.Response.StatusCode = 400;
@@ -31,7 +43,6 @@ namespace MISA.Core.Exceptions
                     Message = ex.Message
                 };
                 context.Response.ContentType = "application/json";
-
                 var json = JsonSerializer.Serialize(errorResponse);
                 await context.Response.WriteAsync(json);
             }

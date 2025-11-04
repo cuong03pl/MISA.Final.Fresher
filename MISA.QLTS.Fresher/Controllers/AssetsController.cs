@@ -24,7 +24,7 @@ namespace MISA.Final.Fresher.Controllers
         /// CreatedBy: HKC (29/10/2025)
         [HttpGet]
         [Route("paging")]
-        public IActionResult Get([FromQuery] string? q, [FromQuery] string? departmentCode, [FromQuery] string? assetTypeCode, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+        public IActionResult Get([FromQuery] string? q, [FromQuery] string? departmentCode, [FromQuery] string? assetTypeCode, [FromQuery] int? pageNumber = 1, [FromQuery] int? pageSize = 20)
         {
             var assets = _assetService.GetAllDto(q, departmentCode, assetTypeCode, pageNumber, pageSize);
             return Ok(assets);

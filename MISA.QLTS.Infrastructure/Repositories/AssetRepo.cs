@@ -83,10 +83,15 @@ namespace MISA.Infrastructure.Repositories
                     new { p_asset_id = assetId },
                     commandType: CommandType.StoredProcedure
                 ).FirstOrDefault();
-                if(mode == "duplicate")
+                if (data == null)
+                {
+                    return null;
+                }
+                if (mode == "duplicate")
                 {
                     data.AssetCode = newCode;
                 }
+              
                 return data;
             }
         }

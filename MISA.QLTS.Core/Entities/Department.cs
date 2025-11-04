@@ -33,5 +33,10 @@ namespace MISA.Core.Entities
         [NotEmptyAttribute("Tên bộ phận")]
         [ColumnNameAttribute("department_name")]
         public string DepartmentName { get; set; }
+
+        /// <summary>
+        /// Tên bộ phận viết tắt
+        /// </summary>
+        public string DepartmentAbbreviation { get; set; }
     }
 }
